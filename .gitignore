@@ -1,0 +1,11 @@
+*.mp4
+*.csv
+*.pyc
+
+# generally all data
+data/
+
+# idea folder on top level
+.idea/
+# pycache folders
+__pycache__/
