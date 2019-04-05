@@ -4,6 +4,32 @@ import numpy as np
 import matplotlib
 
 
+def get_energy(data, half_window_size, sensor='accel'):
+    """
+    Fleckenstein Berechnung Energie
+    :param data: 3d numpy array
+    :param half_window_size: number of window size in samples
+    :param sensor: 'accel' or 'gyro'
+    :return: numpy array
+    """
+
+    if sensor == 'accel':
+        data_e = get_accel(data)
+    else:
+        data_e = get_gyro(data)
+
+    energy_array = np.zeros(data.shape[0] - half_window_size * 2)
+
+    counter = 0
+    for i in range(half_window_size, data.shape[0]-half_window_size):
+        energy_array[counter] = np.sum(np.abs(data_e[i - half_window_size:i+half_window_size, 0])) + \
+                                np.sum(np.abs(data_e[i - half_window_size:i + half_window_size, 0])) + \
+                                np.sum(np.abs(data_e[i - half_window_size:i + half_window_size, 0]))
+        counter += 1
+
+    return energy_array
+
+
 def load_data(filename):
     """
     Load file and returns data as pandas dataframe
@@ -14,6 +40,26 @@ def load_data(filename):
     data = pd.read_csv(filename)
 
     return data
+
+
+def get_accel(data):
+    """
+    Returns numpy array with acc data
+    :param data: pandas data frame
+    :return: numpy array
+    """
+
+    return data.loc[:, ['acc_x', 'acc_y', 'acc_z']].values
+
+
+def get_gyro(data):
+    """
+    Returns numpy array with acc data
+    :param data: pandas data frame
+    :return: numpy array
+    """
+
+    return data.loc[:, ['gyro_x', 'gyro_y', 'gyro_z']].values
 
 
 def get_time_array(n_samples, fs):
