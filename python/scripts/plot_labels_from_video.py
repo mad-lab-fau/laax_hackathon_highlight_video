@@ -4,8 +4,9 @@ import utilities.air_detector as air
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import utilities.video_cutting as vc
 
-file_loc = '../../data/session4/'
+file_loc = '../../data/session1/'
 for root, dirs, files in os.walk(file_loc):
     for m in files:
         if m.endswith('.csv') and m.__contains__('Nils'):
@@ -34,6 +35,10 @@ threshold_lowFFT = 20 # upper threshold for fft
 threshold_gyro_trick = 50 # lower threshold for gyro to be a trick
 air_times = air.detect_air(accel, gyro, window, nr_of_vals, threshold_lowFFT, threshold_gyro_trick)
 labels = air.find_airtime_midpoints(air_times)
+labels_video = vic.convert_index_sampling_rate(labels, 204.8, 25)
+
+vc.cut_video_from_labels(file_loc, 'combinedVideo_134603_to_144738.mp4', labels_video, 2)
+
 print(labels)
 
 figs, ax = plt.subplots(nrows=3, ncols=1, sharex=True)

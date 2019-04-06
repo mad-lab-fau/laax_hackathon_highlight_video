@@ -2,7 +2,7 @@ import numpy as np
 import math
 import scipy.signal as sp
 
-def detect_air(accel, gyro, window=10, nr_of_vals=5, threshold_lowFFT=20, threshold_gyro_trick=50, jump_distance=4):
+def detect_air(accel, gyro, window=10, nr_of_vals=5, threshold_lowFFT=20, threshold_gyro_trick=50, jump_distance=10):
     frames = np.arange(0, accel[:, 0].__len__(), window)
     fft_signal = compute_fft_signal(accel, window)
     #figs, ax = plt.subplots(nrows=3, ncols=1, sharex=True)
@@ -121,4 +121,4 @@ def find_airtime_midpoints(air_times):
         result[k] = peak + int((i/2))
         k = k+1
 
-    return result
+    return result.astype(np.int)
