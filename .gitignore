@@ -1,6 +1,7 @@
 *.mp4
 *.csv
 *.pyc
+*.txt
 
 # generally all data
 data/

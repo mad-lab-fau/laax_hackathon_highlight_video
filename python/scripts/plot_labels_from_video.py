@@ -6,11 +6,16 @@ import matplotlib.pyplot as plt
 import os
 import utilities.video_cutting as vc
 
-file_loc = '../../data/session1/'
+file_loc = '../../data/session3/'
 for root, dirs, files in os.walk(file_loc):
     for m in files:
-        if m.endswith('.csv') and m.__contains__('Nils'):
+        if m.endswith('calib.csv') and m.__contains__('Nils'):
             csv_file = m
+
+for root, dirs, files in os.walk(file_loc):
+    for m in files:
+        if m.endswith('.mp4') and m.__contains__('combinedVideo'):
+            video_file = m
 
 label_file = 'video_framelabels.csv'
 
@@ -37,7 +42,7 @@ air_times = air.detect_air(accel, gyro, window, nr_of_vals, threshold_lowFFT, th
 labels = air.find_airtime_midpoints(air_times)
 labels_video = vic.convert_index_sampling_rate(labels, 204.8, 25)
 
-vc.cut_video_from_labels(file_loc, 'combinedVideo_134603_to_144738.mp4', labels_video, 2)
+vc.cut_video_from_labels(file_loc, video_file, labels_video, 6)
 
 print(labels)
 
