@@ -6,7 +6,7 @@ def cut_video_from_labels(folder_loc, filename, labels, duration_clip, video_nam
     """
     Cut clips from long video using labels
     :param folder_loc: original file location
-    :param filename: string
+    :param filename: string video file
     :param labels: list with labels
     :param duration_clip: in s
     :param video_name: string
