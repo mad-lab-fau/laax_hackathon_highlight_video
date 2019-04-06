@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-file_loc = '../../data/session4/'
+file_loc = '../../data/session2/'
 for root, dirs, files in os.walk(file_loc):
     for m in files:
         if m.endswith('.csv') and m.__contains__('Nils'):
@@ -32,7 +32,8 @@ window = 10 # window size for fft
 nr_of_vals = 5 # number of air labels in a row for it to be a real air
 threshold_lowFFT = 20 # upper threshold for fft
 threshold_gyro_trick = 50 # lower threshold for gyro to be a trick
-air_times = air.detect_air(accel, gyro, window, nr_of_vals, threshold_lowFFT, threshold_gyro_trick)
+jump_distance = 10 # if there are less than (jump_distance * window size) frames between two air times, they are merged
+air_times = air.detect_air(accel, gyro, window, nr_of_vals, threshold_lowFFT, threshold_gyro_trick, jump_distance)
 labels = air.find_airtime_midpoints(air_times)
 print(labels)
 
