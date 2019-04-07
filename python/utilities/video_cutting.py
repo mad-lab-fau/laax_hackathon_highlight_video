@@ -55,3 +55,5 @@ def cut_video_from_labels(folder_loc, filename, labels, duration_clip, video_nam
         # write image
         imageio.mimwrite(folder_loc + video_name + '_' + str(counter_video) + '.mp4', video_numpy, fps=25)
         counter_video += 1
+
+

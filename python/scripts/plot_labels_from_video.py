@@ -42,6 +42,7 @@ threshold_gyro_trick = 50 # lower threshold for gyro to be a trick
 jump_distance = 10 # if there are less than (jump_distance * window size) frames between two air times, they are merged
 air_times = air.detect_air(accel, gyro, window, nr_of_vals, threshold_lowFFT, threshold_gyro_trick, jump_distance)
 labels = air.find_airtime_midpoints(air_times)
+
 labels_video = vic.convert_index_sampling_rate(labels, 204.8, 25)
 
 vc.cut_video_from_labels(file_loc, video_file, labels_video, 6)
