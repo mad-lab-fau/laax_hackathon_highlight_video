@@ -5,7 +5,7 @@ import utilities.air_detector as air
 from moviepy.editor import *
 import utilities.music as music
 
-file_loc = '../../data/session2/'
+file_loc = '../../data/session3/'
 
 for root, dirs, files in os.walk(file_loc):
     for m in files:
@@ -30,14 +30,11 @@ jump_distance = 10 # if there are less than (jump_distance * window size) frames
 air_times = air.detect_air(accel, gyro, window, nr_of_vals, threshold_lowFFT, threshold_gyro_trick, jump_distance)
 """
 
-# read music
-filename = '../../data/music/boom.mp3'
-audio = AudioFileClip(filename)
 
-video = VideoFileClip(file_loc + video_file, audio=True)
-sub_clip = video.subclip(0, 15)
-sub_clip2 = sub_clip.set_audio(audio.set_duration(15))
-sub_clip2.write_videofile(file_loc + "output.mp4",
+
+video = VideoFileClip(file_loc + 'Intro.mp4', audio=True)
+sub_clip = video.set_duration(5.77015873015873)
+sub_clip.write_videofile(file_loc + "Intro2.mp4",
                           temp_audiofile="temp-audio.m4a",
                           remove_temp=True,
                           codec="libx264",

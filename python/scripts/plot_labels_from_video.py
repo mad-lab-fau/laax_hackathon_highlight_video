@@ -5,9 +5,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import utilities.video_cutting as vc
+import matplotlib
 
-file_loc = '../../data/session2/'
-
+session_id = 3
+file_loc = '../../data/session' + str(session_id) + '/'
+offsets = {1: 0, 2: -400, 3:-400, 4: 0}
 for root, dirs, files in os.walk(file_loc):
     for m in files:
         if m.endswith('calib.csv') and m.__contains__('Nils'):
@@ -22,7 +24,11 @@ label_file = 'video_framelabels.csv'
 
 labels_video = pd.read_csv(file_loc + label_file, header=None)
 labels_video = list(labels_video.values)
+#print('videoGT')
+#print(labels_video)
 labels_imu = vic.convert_index_sampling_rate(labels_video, 25, 204.8)
+#print('imuGT')
+#print(labels_imu)
 
 data = util.load_data(file_loc + csv_file)
 
@@ -43,29 +49,62 @@ jump_distance = 10 # if there are less than (jump_distance * window size) frames
 air_times = air.detect_air(accel, gyro, window, nr_of_vals, threshold_lowFFT, threshold_gyro_trick, jump_distance)
 labels = air.find_airtime_midpoints(air_times)
 
-labels_video = vic.convert_index_sampling_rate(labels, 204.8, 25)
+labels += offsets[session_id]
 
-vc.cut_video_from_labels(file_loc, video_file, labels_video, 6)
+# select longest air times only
+n = 4
+[labels_longest, lengths_longest] = air.select_longest(air_times, labels, n)
 
-print(labels)
+#print('imuAir')
+#print(labels)
+#labels[labels < 650] = 650
+labels_video = vic.convert_index_sampling_rate(labels_longest, 204.8, 25)
+#print('videoAir')
+#print(labels_video)
 
-figs, ax = plt.subplots(nrows=3, ncols=1, sharex=True)
-ax[0].plot(t, accel)
-ax[0].set_ylabel('acceleration in m/s^2')
+#vc.cut_video_from_labels(file_loc, video_file, labels_video, 6)
+
+#print(labels)
+
+# set linewidth and fontsize
+matplotlib.rcParams['font.size'] = 14
+matplotlib.rcParams['lines.linewidth'] = 2
+
+figs, ax = plt.subplots(nrows=2, ncols=1, sharex=True)
+ax[0].plot(accel)
+ax[0].set_ylabel('acc in m/s^2')
 ax[0].legend(['x', 'y', 'z'])
-ax[0].vlines(t[labels_imu], -250, 250)
+#ax[0].vlines(labels_imu, -250, 250)
 ax[0].grid(True)
 
 
-ax[1].plot(t, gyro)
-ax[1].set_ylabel('gyroscope in deg^2')
-ax[1].set_xlabel('t in s')
+ax[1].plot(gyro)
+ax[1].set_ylabel('gyro in deg^2')
 ax[1].legend(['x', 'y', 'z'])
-ax[1].vlines(t[labels_imu], -1000, 1000)
+#ax[1].vlines(labels_imu, -1000, 1000)
 ax[1].grid(True)
 
-ax[2].plot(t, air_times)
+
+figs, ax = plt.subplots(nrows=3, ncols=1, sharex=True)
+ax[0].plot(accel)
+ax[0].set_ylabel('acc in m/s^2')
+
+ax[0].legend(['x', 'y', 'z'])
+#ax[0].vlines(labels_imu, -250, 250)
+ax[0].grid(True)
+
+
+ax[1].plot(gyro)
+ax[1].set_ylabel('gyro in deg^2')
+ax[1].set_xlabel('t in s')
+ax[1].legend(['x', 'y', 'z'])
+#ax[1].vlines(labels_imu, -1000, 1000)
+ax[1].grid(True)
+ax[1].set_xlabel('t in s')
+
+ax[2].plot(air_times)
 ax[2].set_ylabel('air_times')
+ax[2].set_xlabel('t in s')
 
 
 plt.show()

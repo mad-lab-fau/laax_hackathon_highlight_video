@@ -122,3 +122,30 @@ def find_airtime_midpoints(air_times):
         k = k+1
 
     return result.astype(np.int)
+
+
+def find_airtime_lengths(air_times):
+    peaks = sp.find_peaks(air_times)
+    result = np.zeros(peaks[0].__len__())
+    k = 0
+    for peak in peaks[0]:
+        length = 0
+        while air_times[peak + length] != 0:
+            length = length + 1
+        result[k] = length
+        k = k + 1
+
+    return result.astype(np.int)
+
+
+def select_longest(air_times, labels, n):
+    labels_longest = np.zeros(n)
+    lengths_longest = np.zeros(n)
+    air_time_lengths = find_airtime_lengths(air_times)
+    number_of_airtimes = air_time_lengths.__len__()
+    idx_shortest_to_longest = np.argsort(air_time_lengths)
+    for i in range(0, n):
+        labels_longest[i] = labels[idx_shortest_to_longest[number_of_airtimes-n+i]]
+        lengths_longest[i] = air_time_lengths[idx_shortest_to_longest[number_of_airtimes-n+i]]
+
+    return labels_longest, lengths_longest

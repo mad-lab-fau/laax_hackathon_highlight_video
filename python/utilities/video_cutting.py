@@ -11,7 +11,11 @@ def cut_video_from_labels(folder_loc, filename, labels, duration_clip, video_nam
     :param duration_clip: in s
     :param video_name: string
     :param video_black_indicator: boolean, default False, if true, black bar is around video
+    :return video_filename: list of written video filenames
     """
+
+    if type(labels) is not list:
+        labels = [labels]
 
     fs_video = 25  # Hz
 
@@ -22,10 +26,12 @@ def cut_video_from_labels(folder_loc, filename, labels, duration_clip, video_nam
     image = reader.get_data(labels[0])
 
     # video duration in
-    video_frames_total = duration_clip * fs_video + 1
+    video_frames_total = int(duration_clip * fs_video + 1)
 
     # iterate over labels and cut videos
     counter_video = 0
+
+    video_file_names = []
     for frame in labels:
 
         # ToDo: problem at start and end
@@ -34,12 +40,12 @@ def cut_video_from_labels(folder_loc, filename, labels, duration_clip, video_nam
             video_numpy = np.zeros((video_frames_total,
                                     image.shape[0] - 560,
                                     image.shape[1],
-                                    image.shape[2])).astype(np.uint8)
+                                    image.shape[2]), dtype=np.uint8)
         else:
             video_numpy = np.zeros((video_frames_total,
                                     image.shape[0],
                                     image.shape[1],
-                                    image.shape[2])).astype(np.uint8)
+                                    image.shape[2]), dtype=np.uint8)
 
         # iterate from half of time before to half of time after
         counter = 0
@@ -54,6 +60,7 @@ def cut_video_from_labels(folder_loc, filename, labels, duration_clip, video_nam
 
         # write image
         imageio.mimwrite(folder_loc + video_name + '_' + str(counter_video) + '.mp4', video_numpy, fps=25)
+        video_file_names.append(video_name + '_' + str(counter_video) + '.mp4')
         counter_video += 1
 
-
+    return video_file_names
